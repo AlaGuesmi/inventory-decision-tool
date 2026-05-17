@@ -504,12 +504,10 @@ with col2:
 with col3:
     arrow = "↑" if delta >= 0 else "↓"
     pct = round(abs(delta) / ROP * 100, 1)
-    sign = "+" if delta >= 0 else "-"
     st.markdown(f"""
-    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px; font-size:0.85rem;'>
+    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px;'>
         <div style='color:#7ec8e3; font-size:1.15rem; font-weight:800; margin-bottom:8px; font-family:Open Sans,sans-serif;'>Buffer above ROP</div>
-        <div style='color:{delta_color}; font-size:2rem; font-weight:800; font-family:Open Sans,sans-serif;'>{delta:,} units</div>
-        <div style='color:{delta_color}; font-size:0.95rem; font-weight:700; margin-top:6px; font-family:Open Sans,sans-serif;'>{arrow} {sign}{pct}%</div>
+        <div style='color:{delta_color}; font-size:2rem; font-weight:800; font-family:Open Sans,sans-serif;'>{delta:,} units &nbsp;<span style='font-size:1rem; font-weight:700;'>({arrow} {pct}%)</span></div>
     </div>
     """, unsafe_allow_html=True)
  

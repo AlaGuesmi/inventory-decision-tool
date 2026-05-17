@@ -491,13 +491,13 @@ delta = int(current_inventory - ROP)
 delta_color = '#2ecc71' if delta >= 0 else '#e74c3c'
 with col1:
     st.markdown(f"""
-    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px; min-height:140px;'>
+    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px;'>
         <div style='color:#7ec8e3; font-size:1.15rem; font-weight:800; margin-bottom:8px; font-family:Open Sans,sans-serif;'>Current Inventory</div>
         <div style='color:#ffffff; font-size:2rem; font-weight:800; font-family:Open Sans,sans-serif;'>{current_inventory:,} units</div>
     </div>""", unsafe_allow_html=True)
 with col2:
     st.markdown(f"""
-    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px; min-height:140px;'>
+    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px;'>
         <div style='color:#7ec8e3; font-size:1.15rem; font-weight:800; margin-bottom:8px; font-family:Open Sans,sans-serif;'>Reorder Point</div>
         <div style='color:#ffffff; font-size:2rem; font-weight:800; font-family:Open Sans,sans-serif;'>{int(ROP):,} units</div>
     </div>""", unsafe_allow_html=True)

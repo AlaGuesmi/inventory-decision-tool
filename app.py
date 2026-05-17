@@ -509,7 +509,7 @@ with col3:
     <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px;'>
         <div style='color:#7ec8e3; font-size:1.15rem; font-weight:800; margin-bottom:8px; font-family:Open Sans,sans-serif;'>Buffer above ROP</div>
         <div style='color:{delta_color}; font-size:2rem; font-weight:800; font-family:Open Sans,sans-serif;'>{delta:,} units</div>
-        <div style='color:{delta_color}; font-size:1rem; font-weight:700; margin-top:6px; font-family:Open Sans,sans-serif;'>{arrow} {pct}%</div>
+        <div style='color:{delta_color}; font-size:1rem; font-weight:700; margin-top:6px; font-family:Open Sans,sans-serif;'>{arrow} {pct}% {status}</div>
     </div>""", unsafe_allow_html=True)
  
 st.markdown("<br>", unsafe_allow_html=True)

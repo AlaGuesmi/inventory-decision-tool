@@ -454,10 +454,11 @@ st.markdown("""
  
 fig2, ax2 = make_plot(figsize=(12, 4))
 all_dates = [LAST_DATE] + forecast_dates
-for scenario, policy in policies.items():
+colors_list = ['#2ecc71', '#f5a623', '#e74c3c']
+for (scenario, policy), color in zip(policies.items(), colors_list):
     trajectory = project_inventory(
         current_inventory, forecasts, policy['ROP'], policy['EOQ'], lead_time)
-    ax2.plot(all_dates, trajectory, 'o-', color=SCENARIO_COLORS[scenario],
+    ax2.plot(all_dates, trajectory, 'o-', color=color,
              linewidth=2.5, markersize=7, label=scenario)
 ax2.axhline(y=0, color='#e74c3c', linestyle='--', linewidth=1, alpha=0.6)
 ax2.set_xlabel('Date', color='#ffffff', fontsize=12, fontweight='bold')

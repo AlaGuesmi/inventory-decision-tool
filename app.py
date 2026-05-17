@@ -294,7 +294,7 @@ with col4:
         help="Fixed cost per replenishment order placed")
 with col5:
     h_pct = st.number_input(
-        "Holding Cost Rate (%)", min_value=10, max_value=60, value=25, step=5,
+        "Holding Cost Rate h (%)", min_value=10, max_value=60, value=25, step=5,
         help="Annual holding cost as % of unit value")
     h_rate = h_pct / 100
  

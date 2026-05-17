@@ -10,10 +10,103 @@ from datetime import timedelta
 # PAGE CONFIG
 # ─────────────────────────────────────────
 st.set_page_config(
-    page_title="Inventory Decision Support Tool",
-    page_icon="📦",
+    page_title="Favorita Inventory Decision Tool",
+    page_icon="🛒",
     layout="wide"
 )
+ 
+# ─────────────────────────────────────────
+# CUSTOM CSS
+# ─────────────────────────────────────────
+st.markdown("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap');
+ 
+    html, body, [class*="css"] {
+        font-family: 'Open Sans', sans-serif;
+        background-color: #0f1923;
+        color: #e8edf2;
+    }
+ 
+    .stApp {
+        background-color: #0f1923;
+    }
+ 
+    h1 {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 2.2rem !important;
+        font-weight: 700 !important;
+        color: #ffffff !important;
+    }
+ 
+    h2 {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 1.4rem !important;
+        font-weight: 600 !important;
+        color: #4fc3f7 !important;
+        border-bottom: 2px solid #1e3a4a;
+        padding-bottom: 8px;
+        margin-top: 24px !important;
+    }
+ 
+    h3 {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 1.1rem !important;
+        font-weight: 600 !important;
+        color: #b0bec5 !important;
+    }
+ 
+    p, div, span, label {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 0.95rem;
+        color: #cfd8dc;
+    }
+ 
+    .stNumberInput label, .stSelectbox label {
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        color: #90caf9 !important;
+    }
+ 
+    [data-testid="metric-container"] {
+        background-color: #1a2d3d;
+        border: 1px solid #1e3a4a;
+        border-radius: 10px;
+        padding: 16px;
+    }
+ 
+    [data-testid="metric-container"] label {
+        color: #90caf9 !important;
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+    }
+ 
+    [data-testid="metric-container"] [data-testid="stMetricValue"] {
+        color: #ffffff !important;
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
+    }
+ 
+    hr {
+        border-color: #1e3a4a !important;
+        margin: 20px 0 !important;
+    }
+ 
+    .stNumberInput input {
+        background-color: #1a2d3d !important;
+        color: #ffffff !important;
+        border: 1px solid #2e4a5a !important;
+        border-radius: 8px !important;
+        font-size: 1rem !important;
+    }
+ 
+    .stSelectbox div[data-baseweb="select"] {
+        background-color: #1a2d3d !important;
+        border: 1px solid #2e4a5a !important;
+        border-radius: 8px !important;
+    }
+</style>
+""", unsafe_allow_html=True)
  
 # ─────────────────────────────────────────
 # LOAD DATA & MODEL
@@ -58,10 +151,8 @@ SCENARIO_COLORS = {
 # HELPER FUNCTIONS
 # ─────────────────────────────────────────
 def generate_forecast(df, n_days=7):
-    """Generate n_days ahead forecast using XGBoost"""
     last_sales = list(df['sales'].values)
     last_row = df.iloc[-1]
- 
     forecast_dates = []
     forecasts = []
  
@@ -70,8 +161,6 @@ def generate_forecast(df, n_days=7):
         day_of_week = next_date.weekday()
         month = next_date.month
         year = next_date.year
- 
-        # Payday: 15th or last day of month
         last_day = calendar.monthrange(year, month)[1]
         is_payday = 1 if next_date.day in [15, last_day] else 0
  
@@ -99,9 +188,8 @@ def generate_forecast(df, n_days=7):
     return forecast_dates, forecasts
  
  
-def compute_policy(percentile, L, p):
-    h = 0.25 * p
-    K = 50
+def compute_policy(percentile, L, p, K, h_rate):
+    h = h_rate * p
     D_annual = results['actual'].mean() * 365
     SS = np.percentile(XGB_RESIDUALS, percentile) * np.sqrt(L)
     mu_L = results['xgboost'].mean() * L
@@ -133,44 +221,76 @@ def project_inventory(current_inv, forecasts, ROP, EOQ, L):
     return trajectory
  
  
+def dark_plot():
+    fig, ax = plt.subplots(figsize=(12, 4))
+    fig.patch.set_facecolor('#0f1923')
+    ax.set_facecolor('#0f1923')
+    ax.tick_params(colors='#90caf9', labelsize=10)
+    for spine in ['bottom', 'left']:
+        ax.spines[spine].set_color('#2e4a5a')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.grid(True, alpha=0.15, color='#2e4a5a')
+    return fig, ax
+ 
+ 
 # ─────────────────────────────────────────
 # HEADER
 # ─────────────────────────────────────────
-st.title("📦 Inventory Decision Support Tool")
-st.markdown("**Store 44 — Personal Care Category | Corporación Favorita**")
-st.markdown("*Powered by XGBoost demand forecasting — simulating decisions as of August 15, 2017*")
+st.markdown("""
+<div style='text-align: center; padding: 20px 0 10px 0;'>
+    <h1 style='font-size: 2.4rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;'>
+        🛒 Favorita Inventory Decision Tool
+    </h1>
+    <p style='font-size: 1.05rem; color: #90caf9; margin-top: 0;'>
+        Quito &nbsp;|&nbsp; Store 44 &nbsp;|&nbsp; Personal Care Category
+    </p>
+    <p style='font-size: 0.85rem; color: #546e7a;'>
+        Powered by XGBoost Demand Forecasting &nbsp;·&nbsp; Continuous Review (s,Q) Policy &nbsp;·&nbsp; Decisions simulated as of August 15, 2017
+    </p>
+</div>
+""", unsafe_allow_html=True)
+ 
 st.divider()
  
 # ─────────────────────────────────────────
-# SECTION 1 — MANAGER INPUT
+# MANAGER INPUT
 # ─────────────────────────────────────────
-st.header("Section 1 — Manager Input")
+st.markdown("## Manager Input")
+st.markdown("<p style='color:#90caf9; font-size:0.9rem;'>Enter current inventory level and adjust cost parameters as needed. All inputs use research-validated defaults.</p>", unsafe_allow_html=True)
  
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4, col5 = st.columns(5)
 with col1:
     current_inventory = st.number_input(
-        "Current Physical Inventory (units)",
-        min_value=0,
-        value=5000,
-        step=100,
-        help="Enter the current number of units on hand"
+        "Current Inventory (units)",
+        min_value=0, value=5000, step=100,
+        help="Current number of units physically on hand"
     )
 with col2:
     lead_time = st.number_input(
         "Lead Time (days)",
-        min_value=1,
-        max_value=21,
-        value=7,
-        help="Number of days between placing and receiving an order"
+        min_value=1, max_value=21, value=7,
+        help="Days between placing and receiving an order"
     )
 with col3:
-    unit_value = st.selectbox(
-        "Unit Value Scenario",
-        options=[2, 4, 8],
-        index=1,
-        format_func=lambda x: f"${x} per unit",
-        help="Assumed average unit value for cost calculations"
+    unit_value = st.number_input(
+        "Unit Value ($)",
+        min_value=1, max_value=50, value=4, step=1,
+        help="Average unit value of Personal Care products"
     )
+with col4:
+    K = st.number_input(
+        "Ordering Cost K ($)",
+        min_value=10, max_value=200, value=50, step=5,
+        help="Fixed cost per replenishment order placed"
+    )
+with col5:
+    h_pct = st.number_input(
+        "Holding Cost Rate (%)",
+        min_value=10, max_value=60, value=25, step=5,
+        help="Annual holding cost as % of unit value"
+    )
+    h_rate = h_pct / 100
  
 st.divider()
  
@@ -189,93 +309,133 @@ upper_bound = [max(0, f + p95) for f in forecasts]
 lower_bound = [max(0, f + p5) for f in forecasts]
  
 # ─────────────────────────────────────────
-# SECTION 2 — 7-DAY DEMAND FORECAST
+# 7-DAY DEMAND FORECAST
 # ─────────────────────────────────────────
-st.header("Section 2 — 7-Day Demand Forecast")
-st.markdown("*Forward-looking demand forecast generated by the XGBoost model using the last available historical data.*")
+st.markdown("## 7-Day Demand Forecast")
+st.markdown("<p style='color:#90caf9; font-size:0.9rem;'>Forward-looking demand forecast generated by the XGBoost model. The shaded band represents the 5th-95th percentile uncertainty range derived from historical forecast residuals.</p>", unsafe_allow_html=True)
  
-fig1, ax1 = plt.subplots(figsize=(12, 4))
-ax1.plot(forecast_dates, forecasts, 'o-', color='#3498db',
-         linewidth=2, markersize=6, label='Point Forecast')
+fig1, ax1 = dark_plot()
+ax1.plot(forecast_dates, forecasts, 'o-', color='#4fc3f7',
+         linewidth=2.5, markersize=7, label='Point Forecast', zorder=3)
 ax1.fill_between(forecast_dates, lower_bound, upper_bound,
-                 alpha=0.2, color='#3498db', label='Uncertainty Band (5th-95th percentile)')
-ax1.set_xlabel('Date')
-ax1.set_ylabel('Forecasted Units Sold')
-ax1.set_title('7-Day Demand Forecast — Personal Care, Store 44')
-ax1.legend()
-ax1.grid(True, alpha=0.3)
+                 alpha=0.15, color='#4fc3f7', label='Uncertainty Band (5th-95th pct)')
+ax1.set_xlabel('Date', color='#90caf9', fontsize=11)
+ax1.set_ylabel('Forecasted Units Sold', color='#90caf9', fontsize=11)
+ax1.set_title('7-Day Demand Forecast — Personal Care, Store 44',
+              color='#ffffff', fontsize=13, fontweight='bold', pad=15)
+ax1.legend(facecolor='#1a2d3d', edgecolor='#2e4a5a', labelcolor='#e8edf2', fontsize=10)
 plt.xticks(rotation=45)
 plt.tight_layout()
 st.pyplot(fig1)
  
 forecast_df = pd.DataFrame({
     'Date': [d.strftime('%Y-%m-%d') for d in forecast_dates],
-    'Point Forecast (units)': [round(f, 0) for f in forecasts],
-    'Lower Bound (units)': [round(l, 0) for l in lower_bound],
-    'Upper Bound (units)': [round(u, 0) for u in upper_bound]
+    'Point Forecast (units)': [int(round(f, 0)) for f in forecasts],
+    'Lower Bound (units)': [int(round(l, 0)) for l in lower_bound],
+    'Upper Bound (units)': [int(round(u, 0)) for u in upper_bound]
 })
 st.dataframe(forecast_df, use_container_width=True)
 st.divider()
  
 # ─────────────────────────────────────────
-# SECTION 3 — SCENARIO ANALYSIS
+# SCENARIO ANALYSIS
 # ─────────────────────────────────────────
-st.header("Section 3 — Scenario Analysis")
-st.markdown("""
-Three inventory scenarios are presented simultaneously, each reflecting a different
-level of demand uncertainty and risk tolerance:
+st.markdown("## Scenario Analysis")
+st.markdown("<p style='color:#90caf9; font-size:0.9rem;'>Three inventory policies derived simultaneously under different uncertainty assumptions. Select the scenario that best reflects your current operational context.</p>", unsafe_allow_html=True)
  
-- 🟢 **Optimistic (90% CSL)** — stable demand conditions, no upcoming demand events
-- 🔵 **Base Case (95% CSL)** — standard operating conditions
-- 🔴 **Pessimistic (99% CSL)** — elevated demand expected (holiday, payday, promotion)
-""")
+col_opt, col_base, col_pes = st.columns(3)
+with col_opt:
+    st.markdown("""
+    <div style='background-color:#1a3d2a; border:1px solid #2ecc71; border-radius:10px; padding:14px;'>
+        <p style='color:#2ecc71; font-weight:700; font-size:1rem; margin-bottom:4px;'>🟢 Optimistic — 90% CSL</p>
+        <p style='color:#b2dfdb; font-size:0.85rem; margin:0;'>Stable conditions. No upcoming holidays, promotions, or payday events. Lean safety stock, lower holding cost.</p>
+    </div>
+    """, unsafe_allow_html=True)
+with col_base:
+    st.markdown("""
+    <div style='background-color:#1a2d4a; border:1px solid #3498db; border-radius:10px; padding:14px;'>
+        <p style='color:#3498db; font-weight:700; font-size:1rem; margin-bottom:4px;'>🔵 Base Case — 95% CSL</p>
+        <p style='color:#b3d4f5; font-size:0.85rem; margin:0;'>Standard operating conditions. Reflects the research framework validated baseline inventory policy.</p>
+    </div>
+    """, unsafe_allow_html=True)
+with col_pes:
+    st.markdown("""
+    <div style='background-color:#3d1a1a; border:1px solid #e74c3c; border-radius:10px; padding:14px;'>
+        <p style='color:#e74c3c; font-weight:700; font-size:1rem; margin-bottom:4px;'>🔴 Pessimistic — 99% CSL</p>
+        <p style='color:#f5b3b3; font-size:0.85rem; margin:0;'>Elevated demand expected. Upcoming holiday, payday, or promotion. Higher safety stock, maximum protection.</p>
+    </div>
+    """, unsafe_allow_html=True)
+ 
+st.markdown("<br>", unsafe_allow_html=True)
  
 policies = {}
 for scenario, percentile in SCENARIO_PERCENTILES.items():
-    policies[scenario] = compute_policy(percentile, lead_time, unit_value)
+    policies[scenario] = compute_policy(percentile, lead_time, unit_value, K, h_rate)
  
-scenario_table = pd.DataFrame({
-    'Scenario': list(policies.keys()),
-    'Target CSL (%)': [p['CSL'] for p in policies.values()],
-    'Safety Stock (units)': [p['SS'] for p in policies.values()],
-    'Reorder Point (units)': [p['ROP'] for p in policies.values()],
-    'Order Quantity (units)': [p['EOQ'] for p in policies.values()],
-    'Expected Annual Cost ($)': [p['TC'] for p in policies.values()],
-    'Order Decision': [
-        '🔴 Place Order' if current_inventory <= p['ROP'] else '🟢 No Order Needed'
-        for p in policies.values()
-    ]
-})
-st.dataframe(scenario_table, use_container_width=True)
+row_colors = ['#1a3d2a', '#1a2d4a', '#3d1a1a']
+border_colors = ['#2ecc71', '#3498db', '#e74c3c']
  
-st.subheader("Projected Inventory Trajectory — Next 7 Days")
-fig2, ax2 = plt.subplots(figsize=(12, 4))
+table_html = """
+<table style='width:100%; border-collapse:collapse; font-family:Open Sans,sans-serif; font-size:14px;'>
+<thead>
+<tr style='background-color:#0d1821;'>
+    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Scenario</th>
+    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Target CSL (%)</th>
+    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Safety Stock (units)</th>
+    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Reorder Point (units)</th>
+    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Order Quantity (units)</th>
+    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Annual Cost ($)</th>
+    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Decision</th>
+</tr>
+</thead>
+<tbody>
+"""
  
+for i, (scenario, policy) in enumerate(policies.items()):
+    decision = '🔴 Place Order' if current_inventory <= policy['ROP'] else '🟢 No Order'
+    table_html += f"""
+    <tr style='background-color:{row_colors[i]}; border-left:3px solid {border_colors[i]};'>
+        <td style='padding:12px 16px; text-align:center; color:#ffffff; border:1px solid #2e4a5a; font-weight:600;'>{scenario}</td>
+        <td style='padding:12px 16px; text-align:center; color:#e8edf2; border:1px solid #2e4a5a;'>{policy['CSL']}%</td>
+        <td style='padding:12px 16px; text-align:center; color:#e8edf2; border:1px solid #2e4a5a;'>{int(policy['SS']):,}</td>
+        <td style='padding:12px 16px; text-align:center; color:#e8edf2; border:1px solid #2e4a5a;'>{int(policy['ROP']):,}</td>
+        <td style='padding:12px 16px; text-align:center; color:#e8edf2; border:1px solid #2e4a5a;'>{int(policy['EOQ']):,}</td>
+        <td style='padding:12px 16px; text-align:center; color:#e8edf2; border:1px solid #2e4a5a;'>${policy['TC']:,.2f}</td>
+        <td style='padding:12px 16px; text-align:center; color:#e8edf2; border:1px solid #2e4a5a; font-weight:600;'>{decision}</td>
+    </tr>
+    """
+ 
+table_html += "</tbody></table>"
+st.markdown(table_html, unsafe_allow_html=True)
+ 
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("### Projected Inventory Trajectory — Next 7 Days")
+ 
+fig2, ax2 = dark_plot()
 all_dates = [LAST_DATE] + forecast_dates
 for scenario, policy in policies.items():
     trajectory = project_inventory(
         current_inventory, forecasts,
         policy['ROP'], policy['EOQ'], lead_time
     )
-    ax2.plot(all_dates, trajectory,
-             'o-', color=SCENARIO_COLORS[scenario],
-             linewidth=2, markersize=5, label=scenario)
+    ax2.plot(all_dates, trajectory, 'o-', color=SCENARIO_COLORS[scenario],
+             linewidth=2.5, markersize=6, label=scenario)
  
-ax2.axhline(y=0, color='black', linestyle='--', linewidth=0.8, label='Zero Inventory')
-ax2.set_xlabel('Date')
-ax2.set_ylabel('Inventory Level (units)')
-ax2.set_title('Projected Inventory Trajectory Under Three Scenarios')
-ax2.legend()
-ax2.grid(True, alpha=0.3)
+ax2.axhline(y=0, color='#e74c3c', linestyle='--', linewidth=0.8, alpha=0.5)
+ax2.set_xlabel('Date', color='#90caf9', fontsize=11)
+ax2.set_ylabel('Inventory Level (units)', color='#90caf9', fontsize=11)
+ax2.set_title('Projected Inventory Trajectory Under Three Scenarios',
+              color='#ffffff', fontsize=13, fontweight='bold', pad=15)
+ax2.legend(facecolor='#1a2d3d', edgecolor='#2e4a5a', labelcolor='#e8edf2', fontsize=10)
 plt.xticks(rotation=45)
 plt.tight_layout()
 st.pyplot(fig2)
 st.divider()
  
 # ─────────────────────────────────────────
-# SECTION 4 — REPLENISHMENT DECISION
+# REPLENISHMENT DECISION
 # ─────────────────────────────────────────
-st.header("Section 4 — Replenishment Decision")
+st.markdown("## Replenishment Decision")
  
 selected_scenario = st.selectbox(
     "Select your operating scenario:",
@@ -293,17 +453,20 @@ with col1:
 with col2:
     st.metric("Reorder Point", f"{int(ROP):,} units")
 with col3:
-    delta = current_inventory - ROP
-    st.metric("Buffer above ROP", f"{int(delta):,} units",
-              delta=int(delta), delta_color="normal")
+    delta = int(current_inventory - ROP)
+    st.metric("Buffer above ROP", f"{delta:,} units", delta=delta, delta_color="normal")
+ 
+st.markdown("<br>", unsafe_allow_html=True)
  
 if current_inventory <= ROP:
-    st.error(f"""
-    ### 🔴 PLACE ORDER
-    **Order Quantity:** {int(EOQ):,} units
-    **Expected Delivery:** {(LAST_DATE + timedelta(days=lead_time)).strftime('%Y-%m-%d')} ({lead_time} days)
-    **Projected inventory at delivery:** {max(0, int(current_inventory - sum(forecasts[:lead_time]))):,} units
-    """)
+    st.markdown(f"""
+    <div style='background-color:#3d1a1a; border:2px solid #e74c3c; border-radius:12px; padding:20px;'>
+        <h3 style='color:#e74c3c; margin-bottom:10px;'>🔴 PLACE ORDER NOW</h3>
+        <p style='color:#f5b3b3; font-size:1rem; margin:6px 0;'><b>Order Quantity:</b> {int(EOQ):,} units</p>
+        <p style='color:#f5b3b3; font-size:1rem; margin:6px 0;'><b>Expected Delivery:</b> {(LAST_DATE + timedelta(days=lead_time)).strftime('%Y-%m-%d')} ({lead_time} days)</p>
+        <p style='color:#f5b3b3; font-size:1rem; margin:6px 0;'><b>Projected inventory at delivery:</b> {max(0, int(current_inventory - sum(forecasts[:lead_time]))):,} units</p>
+    </div>
+    """, unsafe_allow_html=True)
 else:
     days_until_rop = None
     inv = current_inventory
@@ -314,25 +477,29 @@ else:
             break
  
     if days_until_rop:
-        st.warning(f"""
-        ### 🟡 NO ORDER NEEDED — MONITOR CLOSELY
-        Inventory is above the reorder point but may reach it within **{days_until_rop} days**.
-        Consider placing an order soon under the **Pessimistic** scenario.
-        """)
+        st.markdown(f"""
+        <div style='background-color:#3d3000; border:2px solid #f39c12; border-radius:12px; padding:20px;'>
+            <h3 style='color:#f39c12; margin-bottom:10px;'>🟡 NO ORDER — MONITOR CLOSELY</h3>
+            <p style='color:#fdeaa7; font-size:1rem; margin:6px 0;'>Inventory above reorder point but may reach it within <b>{days_until_rop} days</b>.</p>
+            <p style='color:#fdeaa7; font-size:1rem; margin:6px 0;'>Consider switching to the <b>Pessimistic</b> scenario and placing an order soon.</p>
+        </div>
+        """, unsafe_allow_html=True)
     else:
-        st.success(f"""
-        ### 🟢 NO ORDER NEEDED
-        Current inventory of **{current_inventory:,} units** is comfortably above the reorder point of **{int(ROP):,} units**.
-        Next review recommended in **{lead_time} days**.
-        """)
+        st.markdown(f"""
+        <div style='background-color:#1a3d2a; border:2px solid #2ecc71; border-radius:12px; padding:20px;'>
+            <h3 style='color:#2ecc71; margin-bottom:10px;'>🟢 NO ORDER NEEDED</h3>
+            <p style='color:#b2dfdb; font-size:1rem; margin:6px 0;'>Current inventory of <b>{current_inventory:,} units</b> is comfortably above the reorder point of <b>{int(ROP):,} units</b>.</p>
+            <p style='color:#b2dfdb; font-size:1rem; margin:6px 0;'>Next review recommended in <b>{lead_time} days</b>.</p>
+        </div>
+        """, unsafe_allow_html=True)
  
 st.divider()
  
 # ─────────────────────────────────────────
-# SECTION 5 — INVENTORY POLICY PARAMETERS
+# INVENTORY POLICY PARAMETERS
 # ─────────────────────────────────────────
-st.header("Section 5 — Inventory Policy Parameters")
-st.markdown(f"*Active scenario: **{selected_scenario}** | Unit value: **${unit_value}** | Lead time: **{lead_time} days***")
+st.markdown("## Inventory Policy Parameters")
+st.markdown(f"<p style='color:#90caf9; font-size:0.9rem;'>Active scenario: <b>{selected_scenario}</b> &nbsp;|&nbsp; Unit value: <b>${unit_value}</b> &nbsp;|&nbsp; Lead time: <b>{lead_time} days</b> &nbsp;|&nbsp; K: <b>${K}</b> &nbsp;|&nbsp; h: <b>{h_pct}%</b></p>", unsafe_allow_html=True)
  
 col1, col2, col3, col4, col5 = st.columns(5)
 col1.metric("Safety Stock", f"{int(selected_policy['SS']):,} units")
@@ -344,60 +511,63 @@ col5.metric("Expected Annual Cost", f"${selected_policy['TC']:,.2f}")
 st.divider()
  
 # ─────────────────────────────────────────
-# SECTION 6 — PARETO FRONTIER
+# PARETO FRONTIER
 # ─────────────────────────────────────────
-st.header("Section 6 — Cost vs Service Level Trade-off (Pareto Frontier)")
-st.markdown("""
-The curve below shows the cost-service level trade-off for the XGBoost-based inventory policy.
-Each point on the curve represents a non-dominated solution — moving right increases service level
-but at a higher cost. The three scenario operating points are highlighted.
-""")
+st.markdown("## Cost vs Service Level Trade-off")
+st.markdown("<p style='color:#90caf9; font-size:0.9rem;'>Each point on the curve represents a non-dominated inventory policy. Moving right increases service level protection but at a higher annual cost. The three scenario operating points are highlighted.</p>", unsafe_allow_html=True)
  
 csl_range = np.arange(0.85, 1.00, 0.005)
 pareto_csl = []
 pareto_cost = []
  
 for csl in csl_range:
-    p = compute_policy(csl * 100, lead_time, unit_value)
+    p = compute_policy(csl * 100, lead_time, unit_value, K, h_rate)
     pareto_csl.append(csl * 100)
     pareto_cost.append(p['TC'])
  
 fig3, ax3 = plt.subplots(figsize=(12, 5))
-ax3.plot(pareto_csl, pareto_cost, '-', color='#95a5a6',
-         linewidth=2, label='Pareto Frontier (XGBoost)')
+fig3.patch.set_facecolor('#0f1923')
+ax3.set_facecolor('#0f1923')
+ax3.plot(pareto_csl, pareto_cost, '-', color='#546e7a', linewidth=2.5, label='Pareto Frontier (XGBoost)')
  
-scenario_point_colors = ['#2ecc71', '#3498db', '#e74c3c']
 for (scenario, percentile), color in zip(SCENARIO_PERCENTILES.items(),
-                                          scenario_point_colors):
-    p = compute_policy(percentile, lead_time, unit_value)
-    ax3.scatter(p['CSL'], p['TC'], color=color, s=120, zorder=5,
-                label=scenario)
+                                          ['#2ecc71', '#3498db', '#e74c3c']):
+    p = compute_policy(percentile, lead_time, unit_value, K, h_rate)
+    ax3.scatter(p['CSL'], p['TC'], color=color, s=150, zorder=5,
+                edgecolors='white', linewidth=1.5, label=scenario)
     ax3.annotate(f"  {scenario.split('(')[1].replace(')', '')}",
-                 (p['CSL'], p['TC']), fontsize=9)
+                 (p['CSL'], p['TC']), fontsize=9, color=color)
  
-ax3.set_xlabel('Target Cycle Service Level (%)')
-ax3.set_ylabel('Expected Annual Inventory Cost ($)')
-ax3.set_title('Cost vs Service Level Trade-off — XGBoost Inventory Policy')
-ax3.legend()
-ax3.grid(True, alpha=0.3)
+ax3.set_xlabel('Target Cycle Service Level (%)', color='#90caf9', fontsize=11)
+ax3.set_ylabel('Expected Annual Inventory Cost ($)', color='#90caf9', fontsize=11)
+ax3.set_title('Cost vs Service Level Trade-off — XGBoost Inventory Policy',
+              color='#ffffff', fontsize=13, fontweight='bold', pad=15)
+ax3.legend(facecolor='#1a2d3d', edgecolor='#2e4a5a', labelcolor='#e8edf2', fontsize=10)
+ax3.grid(True, alpha=0.15, color='#2e4a5a')
+ax3.tick_params(colors='#90caf9', labelsize=10)
+ax3.spines['bottom'].set_color('#2e4a5a')
+ax3.spines['left'].set_color('#2e4a5a')
+ax3.spines['top'].set_visible(False)
+ax3.spines['right'].set_visible(False)
 plt.tight_layout()
 st.pyplot(fig3)
  
 st.markdown("""
-**How to use this chart:**
-- Move **left** on the curve → lower cost, lower service level protection → choose **Optimistic** scenario
-- Stay at the **middle** → balanced cost and service → choose **Base Case** scenario
-- Move **right** on the curve → higher cost, higher protection → choose **Pessimistic** scenario
-""")
+<div style='background-color:#1a2d3d; border:1px solid #2e4a5a; border-radius:10px; padding:16px; margin-top:12px;'>
+    <p style='color:#90caf9; font-weight:600; margin-bottom:8px;'>How to use this chart:</p>
+    <p style='color:#cfd8dc; margin:4px 0;'>🟢 <b>Move left</b> — lower cost, lower protection → choose <b>Optimistic</b> scenario</p>
+    <p style='color:#cfd8dc; margin:4px 0;'>🔵 <b>Stay at middle</b> — balanced cost and service → choose <b>Base Case</b> scenario</p>
+    <p style='color:#cfd8dc; margin:4px 0;'>🔴 <b>Move right</b> — higher cost, maximum protection → choose <b>Pessimistic</b> scenario</p>
+</div>
+""", unsafe_allow_html=True)
  
 # ─────────────────────────────────────────
 # FOOTER
 # ─────────────────────────────────────────
 st.divider()
 st.markdown("""
-<div style='text-align: center; color: grey; font-size: 12px;'>
-Inventory Decision Support Tool | Personal Care Category — Store 44 | Corporación Favorita<br>
-Powered by XGBoost | Framework: Continuous Review (s,Q) Policy with EOQ<br>
-Proof-of-concept tool — simulating decisions as of August 15, 2017
+<div style='text-align: center; color: #37474f; font-size: 12px; padding: 10px 0;'>
+    Favorita Inventory Decision Tool &nbsp;|&nbsp; Personal Care Category — Store 44, Quito &nbsp;|&nbsp; Corporación Favorita<br>
+    Powered by XGBoost &nbsp;·&nbsp; Continuous Review (s,Q) Policy with EOQ &nbsp;·&nbsp; Proof-of-concept tool
 </div>
 """, unsafe_allow_html=True)

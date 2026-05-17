@@ -70,10 +70,27 @@ st.markdown("""
     }
  
     [data-testid="metric-container"] [data-testid="stMetricValue"],
-    [data-testid="metric-container"] [data-testid="stMetricValue"] div {
+    [data-testid="metric-container"] [data-testid="stMetricValue"] div,
+    [data-testid="metric-container"] [data-testid="stMetricValue"] p,
+    [data-testid="metric-container"] [data-testid="stMetricValue"] span,
+    div[data-testid="stMetric"] div[data-testid="stMetricValue"],
+    div[data-testid="stMetric"] div[data-testid="stMetricValue"] * {
         color: #ffffff !important;
         font-size: 2rem !important;
         font-weight: 800 !important;
+    }
+ 
+    /* Force all text inside metric container to be visible */
+    [data-testid="metric-container"] * {
+        color: #ffffff !important;
+    }
+ 
+    /* But keep label teal */
+    [data-testid="metric-container"] label,
+    [data-testid="metric-container"] [data-testid="stMetricLabel"] p {
+        color: #7ec8e3 !important;
+        font-size: 1.05rem !important;
+        font-weight: 700 !important;
     }
  
     [data-testid="metric-container"] [data-testid="stMetricDelta"] {

@@ -63,10 +63,12 @@ st.markdown("""
     }
  
     [data-testid="metric-container"] label,
-    [data-testid="metric-container"] [data-testid="stMetricLabel"] p {
+    [data-testid="metric-container"] [data-testid="stMetricLabel"] p,
+    [data-testid="metric-container"] [data-testid="stMetricLabel"] div,
+    [data-testid="metric-container"] [data-testid="stMetricLabel"] span {
         color: #7ec8e3 !important;
-        font-size: 1.05rem !important;
-        font-weight: 700 !important;
+        font-size: 1.2rem !important;
+        font-weight: 800 !important;
     }
  
     [data-testid="metric-container"] [data-testid="stMetricValue"],
@@ -85,13 +87,7 @@ st.markdown("""
         color: #ffffff !important;
     }
  
-    /* But keep label teal */
-    [data-testid="metric-container"] label,
-    [data-testid="metric-container"] [data-testid="stMetricLabel"] p {
-        color: #7ec8e3 !important;
-        font-size: 1.05rem !important;
-        font-weight: 700 !important;
-    }
+ 
  
     [data-testid="metric-container"] [data-testid="stMetricDelta"] {
         font-size: 1rem !important;

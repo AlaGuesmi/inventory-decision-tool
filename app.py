@@ -253,7 +253,7 @@ st.markdown("""
 <div style='text-align:center; padding:28px 0 16px 0;'>
     <div style='font-size:3rem; font-weight:800; color:#ffffff;
                 font-family:Open Sans,sans-serif; margin-bottom:8px;'>
-        🛒 Favorita Inventory Decision Tool
+        🛒 Corporación Favorita Inventory Decision Tool
     </div>
     <div style='font-size:1.3rem; color:#7ec8e3;
                 font-family:Open Sans,sans-serif; margin-bottom:6px;'>

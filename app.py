@@ -8,7 +8,7 @@ import calendar
 from datetime import timedelta
  
 st.set_page_config(
-    page_title="Favorita Inventory Decision Tool",
+    page_title="Corporación Favorita Inventory Decision Tool",
     page_icon="🛒",
     layout="wide"
 )

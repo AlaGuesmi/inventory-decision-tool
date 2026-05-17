@@ -487,13 +487,26 @@ ROP = selected_policy['ROP']
 EOQ = selected_policy['EOQ']
  
 col1, col2, col3 = st.columns(3)
+delta = int(current_inventory - ROP)
+delta_color = '#2ecc71' if delta >= 0 else '#e74c3c'
 with col1:
-    st.metric("Current Inventory", f"{current_inventory:,} units")
+    st.markdown(f"""
+    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px;'>
+        <div style='color:#7ec8e3; font-size:1.15rem; font-weight:800; margin-bottom:8px; font-family:Open Sans,sans-serif;'>Current Inventory</div>
+        <div style='color:#ffffff; font-size:2rem; font-weight:800; font-family:Open Sans,sans-serif;'>{current_inventory:,} units</div>
+    </div>""", unsafe_allow_html=True)
 with col2:
-    st.metric("Reorder Point", f"{int(ROP):,} units")
+    st.markdown(f"""
+    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px;'>
+        <div style='color:#7ec8e3; font-size:1.15rem; font-weight:800; margin-bottom:8px; font-family:Open Sans,sans-serif;'>Reorder Point</div>
+        <div style='color:#ffffff; font-size:2rem; font-weight:800; font-family:Open Sans,sans-serif;'>{int(ROP):,} units</div>
+    </div>""", unsafe_allow_html=True)
 with col3:
-    delta = int(current_inventory - ROP)
-    st.metric("Buffer above ROP", f"{delta:,} units", delta=delta, delta_color="normal")
+    st.markdown(f"""
+    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px;'>
+        <div style='color:{delta_color}; font-size:1.15rem; font-weight:800; margin-bottom:8px; font-family:Open Sans,sans-serif;'>Buffer above ROP</div>
+        <div style='color:{delta_color}; font-size:2rem; font-weight:800; font-family:Open Sans,sans-serif;'>{delta:,} units</div>
+    </div>""", unsafe_allow_html=True)
  
 st.markdown("<br>", unsafe_allow_html=True)
  
@@ -578,11 +591,36 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
  
 col1, col2, col3, col4, col5 = st.columns(5)
-col1.metric("Safety Stock", f"{int(selected_policy['SS']):,} units")
-col2.metric("Reorder Point", f"{int(selected_policy['ROP']):,} units")
-col3.metric("Order Quantity (EOQ)", f"{int(selected_policy['EOQ']):,} units")
-col4.metric("Target CSL", f"{selected_policy['CSL']}%")
-col5.metric("Expected Annual Cost", f"${selected_policy['TC']:,.2f}")
+with col1:
+    st.markdown(f"""
+    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px;'>
+        <div style='color:#7ec8e3; font-size:1.15rem; font-weight:800; margin-bottom:8px; font-family:Open Sans,sans-serif;'>Safety Stock</div>
+        <div style='color:#ffffff; font-size:2rem; font-weight:800; font-family:Open Sans,sans-serif;'>{int(selected_policy['SS']):,} units</div>
+    </div>""", unsafe_allow_html=True)
+with col2:
+    st.markdown(f"""
+    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px;'>
+        <div style='color:#7ec8e3; font-size:1.15rem; font-weight:800; margin-bottom:8px; font-family:Open Sans,sans-serif;'>Reorder Point</div>
+        <div style='color:#ffffff; font-size:2rem; font-weight:800; font-family:Open Sans,sans-serif;'>{int(selected_policy['ROP']):,} units</div>
+    </div>""", unsafe_allow_html=True)
+with col3:
+    st.markdown(f"""
+    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px;'>
+        <div style='color:#7ec8e3; font-size:1.15rem; font-weight:800; margin-bottom:8px; font-family:Open Sans,sans-serif;'>Order Quantity (EOQ)</div>
+        <div style='color:#ffffff; font-size:2rem; font-weight:800; font-family:Open Sans,sans-serif;'>{int(selected_policy['EOQ']):,} units</div>
+    </div>""", unsafe_allow_html=True)
+with col4:
+    st.markdown(f"""
+    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px;'>
+        <div style='color:#7ec8e3; font-size:1.15rem; font-weight:800; margin-bottom:8px; font-family:Open Sans,sans-serif;'>Target CSL</div>
+        <div style='color:#ffffff; font-size:2rem; font-weight:800; font-family:Open Sans,sans-serif;'>{selected_policy['CSL']}%</div>
+    </div>""", unsafe_allow_html=True)
+with col5:
+    st.markdown(f"""
+    <div style='background-color:#0d1a2e; border:2px solid #7ec8e3; border-radius:14px; padding:20px;'>
+        <div style='color:#7ec8e3; font-size:1.15rem; font-weight:800; margin-bottom:8px; font-family:Open Sans,sans-serif;'>Expected Annual Cost</div>
+        <div style='color:#ffffff; font-size:2rem; font-weight:800; font-family:Open Sans,sans-serif;'>${selected_policy['TC']:,.2f}</div>
+    </div>""", unsafe_allow_html=True)
  
 st.divider()
  

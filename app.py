@@ -19,52 +19,54 @@ st.markdown("""
     html, body, [class*="css"] {
         font-family: 'Open Sans', sans-serif;
         background-color: #1b2a4a;
-        color: #e8edf2;
+        color: #ffffff;
     }
  
     .stApp {
         background-color: #1b2a4a;
     }
  
-    /* Input labels */
+    /* Input labels — bright and large */
     .stNumberInput label,
     .stSelectbox label {
-        font-size: 1.2rem !important;
+        font-size: 1.15rem !important;
         font-weight: 700 !important;
-        color: #7ec8e3 !important;
+        color: #ffffff !important;
+        letter-spacing: 0.3px !important;
     }
  
     /* Input text inside boxes */
     .stNumberInput input {
-        font-size: 1.15rem !important;
-        font-weight: 600 !important;
+        font-size: 1.2rem !important;
+        font-weight: 700 !important;
         color: #ffffff !important;
         background-color: #243555 !important;
-        border: 1.5px solid #3a5a80 !important;
+        border: 2px solid #5ba8f5 !important;
         border-radius: 8px !important;
         padding: 10px !important;
     }
  
-    /* Selectbox text */
+    /* Selectbox */
     .stSelectbox div[data-baseweb="select"] {
         background-color: #243555 !important;
-        border: 1.5px solid #3a5a80 !important;
+        border: 2px solid #5ba8f5 !important;
         border-radius: 8px !important;
         font-size: 1.15rem !important;
         font-weight: 600 !important;
+        color: #ffffff !important;
     }
  
-    /* Metric cards */
+    /* Metric cards — bright white values */
     [data-testid="metric-container"] {
         background-color: #243555;
-        border: 1.5px solid #3a5a80;
+        border: 2px solid #5ba8f5;
         border-radius: 14px;
         padding: 20px;
     }
  
     [data-testid="metric-container"] label {
         color: #7ec8e3 !important;
-        font-size: 1.1rem !important;
+        font-size: 1.05rem !important;
         font-weight: 700 !important;
     }
  
@@ -72,23 +74,24 @@ st.markdown("""
         color: #ffffff !important;
         font-size: 2rem !important;
         font-weight: 800 !important;
+        text-shadow: 0px 0px 8px rgba(255,255,255,0.3);
     }
  
     [data-testid="metric-container"] [data-testid="stMetricDelta"] {
         font-size: 1rem !important;
+        font-weight: 600 !important;
     }
  
     /* Divider */
     hr {
-        border-color: #2e4a6a !important;
+        border-color: #3a5a80 !important;
         margin: 28px 0 !important;
     }
  
-    /* Dataframe table */
+    /* Dataframe */
     .dataframe th {
         font-size: 1.05rem !important;
         font-weight: 700 !important;
-        background-color: #1b2a4a !important;
         color: #7ec8e3 !important;
         text-align: center !important;
         padding: 12px !important;
@@ -97,6 +100,7 @@ st.markdown("""
     .dataframe td {
         font-size: 1.05rem !important;
         text-align: center !important;
+        color: #ffffff !important;
         padding: 12px !important;
     }
 </style>
@@ -134,7 +138,7 @@ SCENARIO_PERCENTILES = {
  
 SCENARIO_COLORS = {
     'Optimistic (90% CSL)': '#2ecc71',
-    'Base Case (95% CSL)': '#5ba8f5',
+    'Base Case (95% CSL)': '#f5a623',
     'Pessimistic (99% CSL)': '#e74c3c'
 }
  
@@ -203,13 +207,11 @@ def project_inventory(current_inv, forecasts, ROP, EOQ, L):
 def make_plot(figsize=(12, 4)):
     fig, ax = plt.subplots(figsize=figsize)
     fig.patch.set_facecolor('#1b2a4a')
-    ax.set_facecolor('#1b2a4a')
-    ax.tick_params(colors='#b0d4e8', labelsize=11)
-    for spine in ['bottom', 'left']:
-        ax.spines[spine].set_color('#3a5a80')
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.grid(True, alpha=0.15, color='#3a5a80')
+    ax.set_facecolor('#f8f9fa')
+    ax.tick_params(colors='#1b2a4a', labelsize=11)
+    for spine in ax.spines.values():
+        spine.set_color('#cccccc')
+    ax.grid(True, alpha=0.4, color='#cccccc')
     return fig, ax
  
  
@@ -226,7 +228,7 @@ def section_header(title):
  
 def section_desc(text):
     st.markdown(f"""
-    <p style='color:#c0d8ee; font-size:1.05rem; font-family:Open Sans,sans-serif;
+    <p style='color:#d0e8f5; font-size:1.05rem; font-family:Open Sans,sans-serif;
               line-height:1.6; margin-bottom:16px;'>{text}</p>
     """, unsafe_allow_html=True)
  
@@ -244,7 +246,7 @@ st.markdown("""
                 font-family:Open Sans,sans-serif; margin-bottom:6px;'>
         Quito &nbsp;|&nbsp; Store 44 &nbsp;|&nbsp; Personal Care Category
     </div>
-    <div style='font-size:1rem; color:#6a8faf; font-family:Open Sans,sans-serif;'>
+    <div style='font-size:1rem; color:#8ab0cc; font-family:Open Sans,sans-serif;'>
         Powered by XGBoost Demand Forecasting &nbsp;·&nbsp;
         Continuous Review (s,Q) Policy &nbsp;·&nbsp;
         Decisions simulated as of August 15, 2017
@@ -306,15 +308,16 @@ section_header("7-Day Demand Forecast")
 section_desc("Forward-looking demand forecast generated by the XGBoost model. The shaded band represents the 5th–95th percentile uncertainty range derived from historical forecast residuals.")
  
 fig1, ax1 = make_plot(figsize=(12, 4))
-ax1.plot(forecast_dates, forecasts, 'o-', color='#5ba8f5',
+ax1.plot(forecast_dates, forecasts, 'o-', color='#1a5fa8',
          linewidth=2.5, markersize=8, label='Point Forecast', zorder=3)
 ax1.fill_between(forecast_dates, lower_bound, upper_bound,
-                 alpha=0.18, color='#5ba8f5', label='Uncertainty Band (5th–95th pct)')
-ax1.set_xlabel('Date', color='#b0d4e8', fontsize=12)
-ax1.set_ylabel('Forecasted Units Sold', color='#b0d4e8', fontsize=12)
+                 alpha=0.2, color='#1a5fa8', label='Uncertainty Band (5th–95th pct)')
+ax1.set_xlabel('Date', color='#1b2a4a', fontsize=12, fontweight='bold')
+ax1.set_ylabel('Forecasted Units Sold', color='#1b2a4a', fontsize=12, fontweight='bold')
 ax1.set_title('7-Day Demand Forecast — Personal Care, Store 44',
-              color='#ffffff', fontsize=14, fontweight='bold', pad=15)
-ax1.legend(facecolor='#243555', edgecolor='#3a5a80', labelcolor='#e8edf2', fontsize=11)
+              color='#1b2a4a', fontsize=14, fontweight='bold', pad=15)
+ax1.legend(facecolor='#ffffff', edgecolor='#cccccc', fontsize=11)
+ax1.tick_params(colors='#1b2a4a', labelsize=10)
 plt.xticks(rotation=45)
 plt.tight_layout()
 st.pyplot(fig1)
@@ -352,13 +355,13 @@ with col_opt:
     """, unsafe_allow_html=True)
 with col_base:
     st.markdown("""
-    <div style='background-color:#1e2d4a; border:2px solid #5ba8f5;
+    <div style='background-color:#3d3000; border:2px solid #f5a623;
                 border-radius:12px; padding:20px;'>
-        <div style='color:#5ba8f5; font-weight:800; font-size:1.2rem;
+        <div style='color:#f5a623; font-weight:800; font-size:1.2rem;
                     margin-bottom:8px; font-family:Open Sans,sans-serif;'>
-            🔵 Base Case — 95% CSL
+            🟡 Base Case — 95% CSL
         </div>
-        <div style='color:#b3d4f5; font-size:1rem; line-height:1.6;
+        <div style='color:#fdeaa7; font-size:1rem; line-height:1.6;
                     font-family:Open Sans,sans-serif;'>
             Standard operating conditions. Reflects the research framework
             validated baseline inventory policy.
@@ -401,8 +404,7 @@ for scenario, policy in policies.items():
     })
  
 scenario_df = pd.DataFrame(scenario_records)
- 
-row_bg = ['#1e3d2a', '#1e2d4a', '#3d1e1e']
+row_bg = ['#1e3d2a', '#3d3000', '#3d1e1e']
  
 def color_rows(row):
     idx = list(scenario_df.index).index(row.name)
@@ -444,12 +446,13 @@ for scenario, policy in policies.items():
         current_inventory, forecasts, policy['ROP'], policy['EOQ'], lead_time)
     ax2.plot(all_dates, trajectory, 'o-', color=SCENARIO_COLORS[scenario],
              linewidth=2.5, markersize=7, label=scenario)
-ax2.axhline(y=0, color='#e74c3c', linestyle='--', linewidth=0.8, alpha=0.5)
-ax2.set_xlabel('Date', color='#b0d4e8', fontsize=12)
-ax2.set_ylabel('Inventory Level (units)', color='#b0d4e8', fontsize=12)
+ax2.axhline(y=0, color='#e74c3c', linestyle='--', linewidth=1, alpha=0.6)
+ax2.set_xlabel('Date', color='#1b2a4a', fontsize=12, fontweight='bold')
+ax2.set_ylabel('Inventory Level (units)', color='#1b2a4a', fontsize=12, fontweight='bold')
 ax2.set_title('Projected Inventory Trajectory Under Three Scenarios',
-              color='#ffffff', fontsize=14, fontweight='bold', pad=15)
-ax2.legend(facecolor='#243555', edgecolor='#3a5a80', labelcolor='#e8edf2', fontsize=11)
+              color='#1b2a4a', fontsize=14, fontweight='bold', pad=15)
+ax2.legend(facecolor='#ffffff', edgecolor='#cccccc', fontsize=11)
+ax2.tick_params(colors='#1b2a4a', labelsize=10)
 plt.xticks(rotation=45)
 plt.tight_layout()
 st.pyplot(fig2)
@@ -552,7 +555,7 @@ st.divider()
 # ─────────────────────────────────────────
 section_header("Inventory Policy Parameters")
 st.markdown(f"""
-<p style='color:#c0d8ee; font-size:1.05rem; margin-bottom:16px;'>
+<p style='color:#d0e8f5; font-size:1.05rem; margin-bottom:16px;'>
     Active scenario: <b>{selected_scenario}</b> &nbsp;|&nbsp;
     Unit value: <b>${unit_value}</b> &nbsp;|&nbsp;
     Lead time: <b>{lead_time} days</b> &nbsp;|&nbsp;
@@ -585,22 +588,24 @@ for csl in csl_range:
     pareto_cost.append(p['TC'])
  
 fig3, ax3 = make_plot(figsize=(12, 5))
-ax3.plot(pareto_csl, pareto_cost, '-', color='#7a9bbf',
+ax3.plot(pareto_csl, pareto_cost, '-', color='#1b2a4a',
          linewidth=2.5, label='Pareto Frontier (XGBoost)')
  
-for (scenario, percentile), color in zip(SCENARIO_PERCENTILES.items(),
-                                          ['#2ecc71', '#5ba8f5', '#e74c3c']):
+colors_pareto = ['#2ecc71', '#f5a623', '#e74c3c']
+for (scenario, percentile), color in zip(SCENARIO_PERCENTILES.items(), colors_pareto):
     p = compute_policy(percentile, lead_time, unit_value, K, h_rate)
-    ax3.scatter(p['CSL'], p['TC'], color=color, s=180, zorder=5,
+    ax3.scatter(p['CSL'], p['TC'], color=color, s=200, zorder=5,
                 edgecolors='white', linewidth=1.5, label=scenario)
     ax3.annotate(f"  {scenario.split('(')[1].replace(')', '')}",
-                 (p['CSL'], p['TC']), fontsize=10, color=color, fontweight='bold')
+                 (p['CSL'], p['TC']), fontsize=10, color=color,
+                 fontweight='bold')
  
-ax3.set_xlabel('Target Cycle Service Level (%)', color='#b0d4e8', fontsize=12)
-ax3.set_ylabel('Expected Annual Inventory Cost ($)', color='#b0d4e8', fontsize=12)
+ax3.set_xlabel('Target Cycle Service Level (%)', color='#1b2a4a', fontsize=12, fontweight='bold')
+ax3.set_ylabel('Expected Annual Inventory Cost ($)', color='#1b2a4a', fontsize=12, fontweight='bold')
 ax3.set_title('Cost vs Service Level Trade-off — XGBoost Inventory Policy',
-              color='#ffffff', fontsize=14, fontweight='bold', pad=15)
-ax3.legend(facecolor='#243555', edgecolor='#3a5a80', labelcolor='#e8edf2', fontsize=11)
+              color='#1b2a4a', fontsize=14, fontweight='bold', pad=15)
+ax3.legend(facecolor='#ffffff', edgecolor='#cccccc', fontsize=11)
+ax3.tick_params(colors='#1b2a4a', labelsize=10)
 plt.tight_layout()
 st.pyplot(fig3)
  
@@ -610,13 +615,13 @@ st.markdown("""
     <div style='color:#7ec8e3; font-weight:700; font-size:1.1rem; margin-bottom:12px;'>
         How to use this chart:
     </div>
-    <p style='color:#d0dce8; font-size:1.05rem; margin:8px 0;'>
+    <p style='color:#d0e8f5; font-size:1.05rem; margin:8px 0;'>
         🟢 <b>Move left</b> — lower cost, lower protection → choose <b>Optimistic</b> scenario
     </p>
-    <p style='color:#d0dce8; font-size:1.05rem; margin:8px 0;'>
-        🔵 <b>Stay at middle</b> — balanced cost and service → choose <b>Base Case</b> scenario
+    <p style='color:#d0e8f5; font-size:1.05rem; margin:8px 0;'>
+        🟡 <b>Stay at middle</b> — balanced cost and service → choose <b>Base Case</b> scenario
     </p>
-    <p style='color:#d0dce8; font-size:1.05rem; margin:8px 0;'>
+    <p style='color:#d0e8f5; font-size:1.05rem; margin:8px 0;'>
         🔴 <b>Move right</b> — higher cost, maximum protection → choose <b>Pessimistic</b> scenario
     </p>
 </div>
@@ -624,7 +629,7 @@ st.markdown("""
  
 st.divider()
 st.markdown("""
-<div style='text-align:center; color:#4a6a8a; font-size:0.95rem; padding:10px 0;
+<div style='text-align:center; color:#6a8faf; font-size:0.95rem; padding:10px 0;
             font-family:Open Sans,sans-serif;'>
     Favorita Inventory Decision Tool &nbsp;|&nbsp;
     Personal Care Category — Store 44, Quito &nbsp;|&nbsp; Corporación Favorita<br>

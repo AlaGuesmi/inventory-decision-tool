@@ -24,86 +24,115 @@ st.markdown("""
  
     html, body, [class*="css"] {
         font-family: 'Open Sans', sans-serif;
-        background-color: #0f1923;
+        background-color: #1b2a4a;
         color: #e8edf2;
     }
  
     .stApp {
-        background-color: #0f1923;
+        background-color: #1b2a4a;
     }
  
+    /* Main title */
     h1 {
         font-family: 'Open Sans', sans-serif;
-        font-size: 2.2rem !important;
+        font-size: 2.6rem !important;
         font-weight: 700 !important;
         color: #ffffff !important;
+        letter-spacing: 0.5px;
     }
  
+    /* Section headers */
     h2 {
         font-family: 'Open Sans', sans-serif;
-        font-size: 1.4rem !important;
-        font-weight: 600 !important;
-        color: #4fc3f7 !important;
-        border-bottom: 2px solid #1e3a4a;
-        padding-bottom: 8px;
-        margin-top: 24px !important;
+        font-size: 1.7rem !important;
+        font-weight: 700 !important;
+        color: #7ec8e3 !important;
+        border-bottom: 2px solid #2e4a6a;
+        padding-bottom: 10px;
+        margin-top: 28px !important;
     }
  
+    /* Subsection headers */
     h3 {
         font-family: 'Open Sans', sans-serif;
-        font-size: 1.1rem !important;
+        font-size: 1.25rem !important;
         font-weight: 600 !important;
-        color: #b0bec5 !important;
+        color: #b0d4e8 !important;
     }
  
-    p, div, span, label {
+    /* Normal text */
+    p, div, span {
         font-family: 'Open Sans', sans-serif;
-        font-size: 0.95rem;
-        color: #cfd8dc;
+        font-size: 1.05rem !important;
+        color: #d0dce8;
+        line-height: 1.6;
     }
  
-    .stNumberInput label, .stSelectbox label {
-        font-size: 0.95rem !important;
-        font-weight: 600 !important;
-        color: #90caf9 !important;
+    /* Input labels */
+    .stNumberInput label,
+    .stSelectbox label,
+    .stSlider label {
+        font-size: 1.05rem !important;
+        font-weight: 700 !important;
+        color: #7ec8e3 !important;
     }
  
+    /* Input boxes */
+    .stNumberInput input {
+        background-color: #243555 !important;
+        color: #ffffff !important;
+        border: 1px solid #3a5a80 !important;
+        border-radius: 8px !important;
+        font-size: 1.05rem !important;
+        padding: 8px !important;
+    }
+ 
+    /* Select box */
+    .stSelectbox div[data-baseweb="select"] {
+        background-color: #243555 !important;
+        border: 1px solid #3a5a80 !important;
+        border-radius: 8px !important;
+        font-size: 1.05rem !important;
+    }
+ 
+    /* Metric cards */
     [data-testid="metric-container"] {
-        background-color: #1a2d3d;
-        border: 1px solid #1e3a4a;
-        border-radius: 10px;
-        padding: 16px;
+        background-color: #243555;
+        border: 1px solid #3a5a80;
+        border-radius: 12px;
+        padding: 18px;
     }
  
     [data-testid="metric-container"] label {
-        color: #90caf9 !important;
-        font-size: 0.85rem !important;
-        font-weight: 600 !important;
+        color: #7ec8e3 !important;
+        font-size: 1rem !important;
+        font-weight: 700 !important;
     }
  
     [data-testid="metric-container"] [data-testid="stMetricValue"] {
         color: #ffffff !important;
-        font-size: 1.4rem !important;
+        font-size: 1.6rem !important;
         font-weight: 700 !important;
     }
  
+    /* Divider */
     hr {
-        border-color: #1e3a4a !important;
-        margin: 20px 0 !important;
+        border-color: #2e4a6a !important;
+        margin: 24px 0 !important;
     }
  
-    .stNumberInput input {
-        background-color: #1a2d3d !important;
-        color: #ffffff !important;
-        border: 1px solid #2e4a5a !important;
-        border-radius: 8px !important;
+    /* Dataframe */
+    .dataframe th {
         font-size: 1rem !important;
+        font-weight: 700 !important;
+        background-color: #1b2a4a !important;
+        color: #7ec8e3 !important;
+        text-align: center !important;
     }
  
-    .stSelectbox div[data-baseweb="select"] {
-        background-color: #1a2d3d !important;
-        border: 1px solid #2e4a5a !important;
-        border-radius: 8px !important;
+    .dataframe td {
+        font-size: 1rem !important;
+        text-align: center !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -143,7 +172,7 @@ SCENARIO_PERCENTILES = {
  
 SCENARIO_COLORS = {
     'Optimistic (90% CSL)': '#2ecc71',
-    'Base Case (95% CSL)': '#3498db',
+    'Base Case (95% CSL)': '#5ba8f5',
     'Pessimistic (99% CSL)': '#e74c3c'
 }
  
@@ -221,16 +250,16 @@ def project_inventory(current_inv, forecasts, ROP, EOQ, L):
     return trajectory
  
  
-def dark_plot():
-    fig, ax = plt.subplots(figsize=(12, 4))
-    fig.patch.set_facecolor('#0f1923')
-    ax.set_facecolor('#0f1923')
-    ax.tick_params(colors='#90caf9', labelsize=10)
+def make_plot(figsize=(12, 4)):
+    fig, ax = plt.subplots(figsize=figsize)
+    fig.patch.set_facecolor('#1b2a4a')
+    ax.set_facecolor('#1b2a4a')
+    ax.tick_params(colors='#b0d4e8', labelsize=11)
     for spine in ['bottom', 'left']:
-        ax.spines[spine].set_color('#2e4a5a')
+        ax.spines[spine].set_color('#3a5a80')
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
-    ax.grid(True, alpha=0.15, color='#2e4a5a')
+    ax.grid(True, alpha=0.15, color='#3a5a80')
     return fig, ax
  
  
@@ -238,16 +267,16 @@ def dark_plot():
 # HEADER
 # ─────────────────────────────────────────
 st.markdown("""
-<div style='text-align: center; padding: 20px 0 10px 0;'>
-    <h1 style='font-size: 2.4rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;'>
+<div style='text-align: center; padding: 24px 0 12px 0;'>
+    <div style='font-size: 2.8rem; font-weight: 800; color: #ffffff; margin-bottom: 6px; font-family: Open Sans, sans-serif;'>
         🛒 Favorita Inventory Decision Tool
-    </h1>
-    <p style='font-size: 1.05rem; color: #90caf9; margin-top: 0;'>
+    </div>
+    <div style='font-size: 1.2rem; color: #7ec8e3; margin-top: 0; font-family: Open Sans, sans-serif;'>
         Quito &nbsp;|&nbsp; Store 44 &nbsp;|&nbsp; Personal Care Category
-    </p>
-    <p style='font-size: 0.85rem; color: #546e7a;'>
+    </div>
+    <div style='font-size: 0.95rem; color: #7a9bbf; margin-top: 6px; font-family: Open Sans, sans-serif;'>
         Powered by XGBoost Demand Forecasting &nbsp;·&nbsp; Continuous Review (s,Q) Policy &nbsp;·&nbsp; Decisions simulated as of August 15, 2017
-    </p>
+    </div>
 </div>
 """, unsafe_allow_html=True)
  
@@ -257,7 +286,7 @@ st.divider()
 # MANAGER INPUT
 # ─────────────────────────────────────────
 st.markdown("## Manager Input")
-st.markdown("<p style='color:#90caf9; font-size:0.9rem;'>Enter current inventory level and adjust cost parameters as needed. All inputs use research-validated defaults.</p>", unsafe_allow_html=True)
+st.markdown("<p style='color:#b0d4e8; font-size:1.05rem;'>Enter the current inventory level and adjust cost parameters if needed. All inputs use research-validated defaults.</p>", unsafe_allow_html=True)
  
 col1, col2, col3, col4, col5 = st.columns(5)
 with col1:
@@ -312,18 +341,18 @@ lower_bound = [max(0, f + p5) for f in forecasts]
 # 7-DAY DEMAND FORECAST
 # ─────────────────────────────────────────
 st.markdown("## 7-Day Demand Forecast")
-st.markdown("<p style='color:#90caf9; font-size:0.9rem;'>Forward-looking demand forecast generated by the XGBoost model. The shaded band represents the 5th-95th percentile uncertainty range derived from historical forecast residuals.</p>", unsafe_allow_html=True)
+st.markdown("<p style='color:#b0d4e8; font-size:1.05rem;'>Forward-looking demand forecast generated by the XGBoost model. The shaded band represents the 5th–95th percentile uncertainty range derived from historical forecast residuals.</p>", unsafe_allow_html=True)
  
-fig1, ax1 = dark_plot()
-ax1.plot(forecast_dates, forecasts, 'o-', color='#4fc3f7',
-         linewidth=2.5, markersize=7, label='Point Forecast', zorder=3)
+fig1, ax1 = make_plot(figsize=(12, 4))
+ax1.plot(forecast_dates, forecasts, 'o-', color='#5ba8f5',
+         linewidth=2.5, markersize=8, label='Point Forecast', zorder=3)
 ax1.fill_between(forecast_dates, lower_bound, upper_bound,
-                 alpha=0.15, color='#4fc3f7', label='Uncertainty Band (5th-95th pct)')
-ax1.set_xlabel('Date', color='#90caf9', fontsize=11)
-ax1.set_ylabel('Forecasted Units Sold', color='#90caf9', fontsize=11)
+                 alpha=0.18, color='#5ba8f5', label='Uncertainty Band (5th–95th pct)')
+ax1.set_xlabel('Date', color='#b0d4e8', fontsize=12)
+ax1.set_ylabel('Forecasted Units Sold', color='#b0d4e8', fontsize=12)
 ax1.set_title('7-Day Demand Forecast — Personal Care, Store 44',
-              color='#ffffff', fontsize=13, fontweight='bold', pad=15)
-ax1.legend(facecolor='#1a2d3d', edgecolor='#2e4a5a', labelcolor='#e8edf2', fontsize=10)
+              color='#ffffff', fontsize=14, fontweight='bold', pad=15)
+ax1.legend(facecolor='#243555', edgecolor='#3a5a80', labelcolor='#e8edf2', fontsize=11)
 plt.xticks(rotation=45)
 plt.tight_layout()
 st.pyplot(fig1)
@@ -334,35 +363,35 @@ forecast_df = pd.DataFrame({
     'Lower Bound (units)': [int(round(l, 0)) for l in lower_bound],
     'Upper Bound (units)': [int(round(u, 0)) for u in upper_bound]
 })
-st.dataframe(forecast_df, use_container_width=True)
+st.dataframe(forecast_df, use_container_width=True, hide_index=True)
 st.divider()
  
 # ─────────────────────────────────────────
 # SCENARIO ANALYSIS
 # ─────────────────────────────────────────
 st.markdown("## Scenario Analysis")
-st.markdown("<p style='color:#90caf9; font-size:0.9rem;'>Three inventory policies derived simultaneously under different uncertainty assumptions. Select the scenario that best reflects your current operational context.</p>", unsafe_allow_html=True)
+st.markdown("<p style='color:#b0d4e8; font-size:1.05rem;'>Three inventory policies derived simultaneously under different uncertainty assumptions. Select the scenario that best reflects your current operational context.</p>", unsafe_allow_html=True)
  
 col_opt, col_base, col_pes = st.columns(3)
 with col_opt:
     st.markdown("""
-    <div style='background-color:#1a3d2a; border:1px solid #2ecc71; border-radius:10px; padding:14px;'>
-        <p style='color:#2ecc71; font-weight:700; font-size:1rem; margin-bottom:4px;'>🟢 Optimistic — 90% CSL</p>
-        <p style='color:#b2dfdb; font-size:0.85rem; margin:0;'>Stable conditions. No upcoming holidays, promotions, or payday events. Lean safety stock, lower holding cost.</p>
+    <div style='background-color:#1e3d2a; border:2px solid #2ecc71; border-radius:12px; padding:18px;'>
+        <p style='color:#2ecc71; font-weight:700; font-size:1.1rem; margin-bottom:6px;'>🟢 Optimistic — 90% CSL</p>
+        <p style='color:#b2dfdb; font-size:0.98rem; margin:0; line-height:1.5;'>Stable conditions. No upcoming holidays, promotions, or payday events. Lean safety stock, lower holding cost.</p>
     </div>
     """, unsafe_allow_html=True)
 with col_base:
     st.markdown("""
-    <div style='background-color:#1a2d4a; border:1px solid #3498db; border-radius:10px; padding:14px;'>
-        <p style='color:#3498db; font-weight:700; font-size:1rem; margin-bottom:4px;'>🔵 Base Case — 95% CSL</p>
-        <p style='color:#b3d4f5; font-size:0.85rem; margin:0;'>Standard operating conditions. Reflects the research framework validated baseline inventory policy.</p>
+    <div style='background-color:#1e2d4a; border:2px solid #5ba8f5; border-radius:12px; padding:18px;'>
+        <p style='color:#5ba8f5; font-weight:700; font-size:1.1rem; margin-bottom:6px;'>🔵 Base Case — 95% CSL</p>
+        <p style='color:#b3d4f5; font-size:0.98rem; margin:0; line-height:1.5;'>Standard operating conditions. Reflects the research framework validated baseline inventory policy.</p>
     </div>
     """, unsafe_allow_html=True)
 with col_pes:
     st.markdown("""
-    <div style='background-color:#3d1a1a; border:1px solid #e74c3c; border-radius:10px; padding:14px;'>
-        <p style='color:#e74c3c; font-weight:700; font-size:1rem; margin-bottom:4px;'>🔴 Pessimistic — 99% CSL</p>
-        <p style='color:#f5b3b3; font-size:0.85rem; margin:0;'>Elevated demand expected. Upcoming holiday, payday, or promotion. Higher safety stock, maximum protection.</p>
+    <div style='background-color:#3d1e1e; border:2px solid #e74c3c; border-radius:12px; padding:18px;'>
+        <p style='color:#e74c3c; font-weight:700; font-size:1.1rem; margin-bottom:6px;'>🔴 Pessimistic — 99% CSL</p>
+        <p style='color:#f5b3b3; font-size:0.98rem; margin:0; line-height:1.5;'>Elevated demand expected. Upcoming holiday, payday, or promotion. Higher safety stock, maximum protection.</p>
     </div>
     """, unsafe_allow_html=True)
  
@@ -372,46 +401,55 @@ policies = {}
 for scenario, percentile in SCENARIO_PERCENTILES.items():
     policies[scenario] = compute_policy(percentile, lead_time, unit_value, K, h_rate)
  
-row_colors = ['#1a3d2a', '#1a2d4a', '#3d1a1a']
-border_colors = ['#2ecc71', '#3498db', '#e74c3c']
- 
-table_html = """
-<table style='width:100%; border-collapse:collapse; font-family:Open Sans,sans-serif; font-size:14px;'>
-<thead>
-<tr style='background-color:#0d1821;'>
-    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Scenario</th>
-    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Target CSL (%)</th>
-    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Safety Stock (units)</th>
-    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Reorder Point (units)</th>
-    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Order Quantity (units)</th>
-    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Annual Cost ($)</th>
-    <th style='padding:12px 16px; text-align:center; color:#4fc3f7; border:1px solid #2e4a5a; font-weight:700;'>Decision</th>
-</tr>
-</thead>
-<tbody>
-"""
- 
+# Build scenario table as proper dataframe
+scenario_records = []
+row_bg = ['#1e3d2a', '#1e2d4a', '#3d1e1e']
 for i, (scenario, policy) in enumerate(policies.items()):
     decision = '🔴 Place Order' if current_inventory <= policy['ROP'] else '🟢 No Order'
-    table_html += f"""
-    <tr style='background-color:{row_colors[i]}; border-left:3px solid {border_colors[i]};'>
-        <td style='padding:12px 16px; text-align:center; color:#ffffff; border:1px solid #2e4a5a; font-weight:600;'>{scenario}</td>
-        <td style='padding:12px 16px; text-align:center; color:#e8edf2; border:1px solid #2e4a5a;'>{policy['CSL']}%</td>
-        <td style='padding:12px 16px; text-align:center; color:#e8edf2; border:1px solid #2e4a5a;'>{int(policy['SS']):,}</td>
-        <td style='padding:12px 16px; text-align:center; color:#e8edf2; border:1px solid #2e4a5a;'>{int(policy['ROP']):,}</td>
-        <td style='padding:12px 16px; text-align:center; color:#e8edf2; border:1px solid #2e4a5a;'>{int(policy['EOQ']):,}</td>
-        <td style='padding:12px 16px; text-align:center; color:#e8edf2; border:1px solid #2e4a5a;'>${policy['TC']:,.2f}</td>
-        <td style='padding:12px 16px; text-align:center; color:#e8edf2; border:1px solid #2e4a5a; font-weight:600;'>{decision}</td>
-    </tr>
-    """
+    scenario_records.append({
+        'Scenario': scenario,
+        'Target CSL (%)': f"{policy['CSL']}%",
+        'Safety Stock (units)': f"{int(policy['SS']):,}",
+        'Reorder Point (units)': f"{int(policy['ROP']):,}",
+        'Order Quantity (units)': f"{int(policy['EOQ']):,}",
+        'Annual Cost ($)': f"${policy['TC']:,.2f}",
+        'Decision': decision
+    })
  
-table_html += "</tbody></table>"
-st.markdown(table_html, unsafe_allow_html=True)
+scenario_df = pd.DataFrame(scenario_records)
+ 
+def color_rows(row):
+    idx = scenario_df.index.get_loc(row.name)
+    colors = [
+        'background-color: #1e3d2a; color: #e8edf2; font-size: 1rem; text-align: center; border: 1px solid #2e4a6a;',
+        'background-color: #1e2d4a; color: #e8edf2; font-size: 1rem; text-align: center; border: 1px solid #2e4a6a;',
+        'background-color: #3d1e1e; color: #e8edf2; font-size: 1rem; text-align: center; border: 1px solid #2e4a6a;'
+    ]
+    return [colors[idx]] * len(row)
+ 
+styled_scenario = scenario_df.style.apply(color_rows, axis=1).set_table_styles([
+    {'selector': 'th', 'props': [
+        ('background-color', '#1b2a4a'),
+        ('color', '#7ec8e3'),
+        ('font-weight', 'bold'),
+        ('font-size', '1rem'),
+        ('text-align', 'center'),
+        ('border', '1px solid #3a5a80'),
+        ('padding', '12px')
+    ]},
+    {'selector': 'td', 'props': [
+        ('padding', '12px 16px'),
+        ('border', '1px solid #2e4a6a'),
+        ('font-size', '1rem')
+    ]}
+])
+ 
+st.dataframe(styled_scenario, use_container_width=True, hide_index=True)
  
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("### Projected Inventory Trajectory — Next 7 Days")
  
-fig2, ax2 = dark_plot()
+fig2, ax2 = make_plot(figsize=(12, 4))
 all_dates = [LAST_DATE] + forecast_dates
 for scenario, policy in policies.items():
     trajectory = project_inventory(
@@ -419,14 +457,14 @@ for scenario, policy in policies.items():
         policy['ROP'], policy['EOQ'], lead_time
     )
     ax2.plot(all_dates, trajectory, 'o-', color=SCENARIO_COLORS[scenario],
-             linewidth=2.5, markersize=6, label=scenario)
+             linewidth=2.5, markersize=7, label=scenario)
  
-ax2.axhline(y=0, color='#e74c3c', linestyle='--', linewidth=0.8, alpha=0.5)
-ax2.set_xlabel('Date', color='#90caf9', fontsize=11)
-ax2.set_ylabel('Inventory Level (units)', color='#90caf9', fontsize=11)
+ax2.axhline(y=0, color='#e74c3c', linestyle='--', linewidth=0.8, alpha=0.5, label='Zero Inventory')
+ax2.set_xlabel('Date', color='#b0d4e8', fontsize=12)
+ax2.set_ylabel('Inventory Level (units)', color='#b0d4e8', fontsize=12)
 ax2.set_title('Projected Inventory Trajectory Under Three Scenarios',
-              color='#ffffff', fontsize=13, fontweight='bold', pad=15)
-ax2.legend(facecolor='#1a2d3d', edgecolor='#2e4a5a', labelcolor='#e8edf2', fontsize=10)
+              color='#ffffff', fontsize=14, fontweight='bold', pad=15)
+ax2.legend(facecolor='#243555', edgecolor='#3a5a80', labelcolor='#e8edf2', fontsize=11)
 plt.xticks(rotation=45)
 plt.tight_layout()
 st.pyplot(fig2)
@@ -460,11 +498,11 @@ st.markdown("<br>", unsafe_allow_html=True)
  
 if current_inventory <= ROP:
     st.markdown(f"""
-    <div style='background-color:#3d1a1a; border:2px solid #e74c3c; border-radius:12px; padding:20px;'>
-        <h3 style='color:#e74c3c; margin-bottom:10px;'>🔴 PLACE ORDER NOW</h3>
-        <p style='color:#f5b3b3; font-size:1rem; margin:6px 0;'><b>Order Quantity:</b> {int(EOQ):,} units</p>
-        <p style='color:#f5b3b3; font-size:1rem; margin:6px 0;'><b>Expected Delivery:</b> {(LAST_DATE + timedelta(days=lead_time)).strftime('%Y-%m-%d')} ({lead_time} days)</p>
-        <p style='color:#f5b3b3; font-size:1rem; margin:6px 0;'><b>Projected inventory at delivery:</b> {max(0, int(current_inventory - sum(forecasts[:lead_time]))):,} units</p>
+    <div style='background-color:#3d1e1e; border:2px solid #e74c3c; border-radius:14px; padding:24px;'>
+        <div style='color:#e74c3c; font-weight:800; font-size:1.4rem; margin-bottom:12px; font-family:Open Sans,sans-serif;'>🔴 PLACE ORDER NOW</div>
+        <p style='color:#f5c6c6; font-size:1.05rem; margin:8px 0;'><b>Order Quantity:</b> {int(EOQ):,} units</p>
+        <p style='color:#f5c6c6; font-size:1.05rem; margin:8px 0;'><b>Expected Delivery:</b> {(LAST_DATE + timedelta(days=lead_time)).strftime('%Y-%m-%d')} ({lead_time} days)</p>
+        <p style='color:#f5c6c6; font-size:1.05rem; margin:8px 0;'><b>Projected inventory at delivery:</b> {max(0, int(current_inventory - sum(forecasts[:lead_time]))):,} units</p>
     </div>
     """, unsafe_allow_html=True)
 else:
@@ -478,18 +516,18 @@ else:
  
     if days_until_rop:
         st.markdown(f"""
-        <div style='background-color:#3d3000; border:2px solid #f39c12; border-radius:12px; padding:20px;'>
-            <h3 style='color:#f39c12; margin-bottom:10px;'>🟡 NO ORDER — MONITOR CLOSELY</h3>
-            <p style='color:#fdeaa7; font-size:1rem; margin:6px 0;'>Inventory above reorder point but may reach it within <b>{days_until_rop} days</b>.</p>
-            <p style='color:#fdeaa7; font-size:1rem; margin:6px 0;'>Consider switching to the <b>Pessimistic</b> scenario and placing an order soon.</p>
+        <div style='background-color:#3d3000; border:2px solid #f39c12; border-radius:14px; padding:24px;'>
+            <div style='color:#f39c12; font-weight:800; font-size:1.4rem; margin-bottom:12px; font-family:Open Sans,sans-serif;'>🟡 NO ORDER — MONITOR CLOSELY</div>
+            <p style='color:#fdeaa7; font-size:1.05rem; margin:8px 0;'>Inventory above reorder point but may reach it within <b>{days_until_rop} days</b>.</p>
+            <p style='color:#fdeaa7; font-size:1.05rem; margin:8px 0;'>Consider switching to the <b>Pessimistic</b> scenario and placing an order soon.</p>
         </div>
         """, unsafe_allow_html=True)
     else:
         st.markdown(f"""
-        <div style='background-color:#1a3d2a; border:2px solid #2ecc71; border-radius:12px; padding:20px;'>
-            <h3 style='color:#2ecc71; margin-bottom:10px;'>🟢 NO ORDER NEEDED</h3>
-            <p style='color:#b2dfdb; font-size:1rem; margin:6px 0;'>Current inventory of <b>{current_inventory:,} units</b> is comfortably above the reorder point of <b>{int(ROP):,} units</b>.</p>
-            <p style='color:#b2dfdb; font-size:1rem; margin:6px 0;'>Next review recommended in <b>{lead_time} days</b>.</p>
+        <div style='background-color:#1e3d2a; border:2px solid #2ecc71; border-radius:14px; padding:24px;'>
+            <div style='color:#2ecc71; font-weight:800; font-size:1.4rem; margin-bottom:12px; font-family:Open Sans,sans-serif;'>🟢 NO ORDER NEEDED</div>
+            <p style='color:#b2dfdb; font-size:1.05rem; margin:8px 0;'>Current inventory of <b>{current_inventory:,} units</b> is comfortably above the reorder point of <b>{int(ROP):,} units</b>.</p>
+            <p style='color:#b2dfdb; font-size:1.05rem; margin:8px 0;'>Next review recommended in <b>{lead_time} days</b>.</p>
         </div>
         """, unsafe_allow_html=True)
  
@@ -499,7 +537,7 @@ st.divider()
 # INVENTORY POLICY PARAMETERS
 # ─────────────────────────────────────────
 st.markdown("## Inventory Policy Parameters")
-st.markdown(f"<p style='color:#90caf9; font-size:0.9rem;'>Active scenario: <b>{selected_scenario}</b> &nbsp;|&nbsp; Unit value: <b>${unit_value}</b> &nbsp;|&nbsp; Lead time: <b>{lead_time} days</b> &nbsp;|&nbsp; K: <b>${K}</b> &nbsp;|&nbsp; h: <b>{h_pct}%</b></p>", unsafe_allow_html=True)
+st.markdown(f"<p style='color:#b0d4e8; font-size:1.05rem;'>Active scenario: <b>{selected_scenario}</b> &nbsp;|&nbsp; Unit value: <b>${unit_value}</b> &nbsp;|&nbsp; Lead time: <b>{lead_time} days</b> &nbsp;|&nbsp; K: <b>${K}</b> &nbsp;|&nbsp; h: <b>{h_pct}%</b></p>", unsafe_allow_html=True)
  
 col1, col2, col3, col4, col5 = st.columns(5)
 col1.metric("Safety Stock", f"{int(selected_policy['SS']):,} units")
@@ -514,7 +552,7 @@ st.divider()
 # PARETO FRONTIER
 # ─────────────────────────────────────────
 st.markdown("## Cost vs Service Level Trade-off")
-st.markdown("<p style='color:#90caf9; font-size:0.9rem;'>Each point on the curve represents a non-dominated inventory policy. Moving right increases service level protection but at a higher annual cost. The three scenario operating points are highlighted.</p>", unsafe_allow_html=True)
+st.markdown("<p style='color:#b0d4e8; font-size:1.05rem;'>Each point on the curve represents a non-dominated inventory policy. Moving right increases service level protection but at a higher annual cost. The three scenario operating points are highlighted.</p>", unsafe_allow_html=True)
  
 csl_range = np.arange(0.85, 1.00, 0.005)
 pareto_csl = []
@@ -525,39 +563,31 @@ for csl in csl_range:
     pareto_csl.append(csl * 100)
     pareto_cost.append(p['TC'])
  
-fig3, ax3 = plt.subplots(figsize=(12, 5))
-fig3.patch.set_facecolor('#0f1923')
-ax3.set_facecolor('#0f1923')
-ax3.plot(pareto_csl, pareto_cost, '-', color='#546e7a', linewidth=2.5, label='Pareto Frontier (XGBoost)')
+fig3, ax3 = make_plot(figsize=(12, 5))
+ax3.plot(pareto_csl, pareto_cost, '-', color='#7a9bbf', linewidth=2.5, label='Pareto Frontier (XGBoost)')
  
 for (scenario, percentile), color in zip(SCENARIO_PERCENTILES.items(),
-                                          ['#2ecc71', '#3498db', '#e74c3c']):
+                                          ['#2ecc71', '#5ba8f5', '#e74c3c']):
     p = compute_policy(percentile, lead_time, unit_value, K, h_rate)
-    ax3.scatter(p['CSL'], p['TC'], color=color, s=150, zorder=5,
+    ax3.scatter(p['CSL'], p['TC'], color=color, s=180, zorder=5,
                 edgecolors='white', linewidth=1.5, label=scenario)
     ax3.annotate(f"  {scenario.split('(')[1].replace(')', '')}",
-                 (p['CSL'], p['TC']), fontsize=9, color=color)
+                 (p['CSL'], p['TC']), fontsize=10, color=color, fontweight='bold')
  
-ax3.set_xlabel('Target Cycle Service Level (%)', color='#90caf9', fontsize=11)
-ax3.set_ylabel('Expected Annual Inventory Cost ($)', color='#90caf9', fontsize=11)
+ax3.set_xlabel('Target Cycle Service Level (%)', color='#b0d4e8', fontsize=12)
+ax3.set_ylabel('Expected Annual Inventory Cost ($)', color='#b0d4e8', fontsize=12)
 ax3.set_title('Cost vs Service Level Trade-off — XGBoost Inventory Policy',
-              color='#ffffff', fontsize=13, fontweight='bold', pad=15)
-ax3.legend(facecolor='#1a2d3d', edgecolor='#2e4a5a', labelcolor='#e8edf2', fontsize=10)
-ax3.grid(True, alpha=0.15, color='#2e4a5a')
-ax3.tick_params(colors='#90caf9', labelsize=10)
-ax3.spines['bottom'].set_color('#2e4a5a')
-ax3.spines['left'].set_color('#2e4a5a')
-ax3.spines['top'].set_visible(False)
-ax3.spines['right'].set_visible(False)
+              color='#ffffff', fontsize=14, fontweight='bold', pad=15)
+ax3.legend(facecolor='#243555', edgecolor='#3a5a80', labelcolor='#e8edf2', fontsize=11)
 plt.tight_layout()
 st.pyplot(fig3)
  
 st.markdown("""
-<div style='background-color:#1a2d3d; border:1px solid #2e4a5a; border-radius:10px; padding:16px; margin-top:12px;'>
-    <p style='color:#90caf9; font-weight:600; margin-bottom:8px;'>How to use this chart:</p>
-    <p style='color:#cfd8dc; margin:4px 0;'>🟢 <b>Move left</b> — lower cost, lower protection → choose <b>Optimistic</b> scenario</p>
-    <p style='color:#cfd8dc; margin:4px 0;'>🔵 <b>Stay at middle</b> — balanced cost and service → choose <b>Base Case</b> scenario</p>
-    <p style='color:#cfd8dc; margin:4px 0;'>🔴 <b>Move right</b> — higher cost, maximum protection → choose <b>Pessimistic</b> scenario</p>
+<div style='background-color:#243555; border:1px solid #3a5a80; border-radius:12px; padding:20px; margin-top:16px;'>
+    <p style='color:#7ec8e3; font-weight:700; font-size:1.05rem; margin-bottom:10px;'>How to use this chart:</p>
+    <p style='color:#d0dce8; font-size:1.0rem; margin:6px 0;'>🟢 <b>Move left</b> — lower cost, lower protection → choose <b>Optimistic</b> scenario</p>
+    <p style='color:#d0dce8; font-size:1.0rem; margin:6px 0;'>🔵 <b>Stay at middle</b> — balanced cost and service → choose <b>Base Case</b> scenario</p>
+    <p style='color:#d0dce8; font-size:1.0rem; margin:6px 0;'>🔴 <b>Move right</b> — higher cost, maximum protection → choose <b>Pessimistic</b> scenario</p>
 </div>
 """, unsafe_allow_html=True)
  
@@ -566,7 +596,7 @@ st.markdown("""
 # ─────────────────────────────────────────
 st.divider()
 st.markdown("""
-<div style='text-align: center; color: #37474f; font-size: 12px; padding: 10px 0;'>
+<div style='text-align: center; color: #4a6a8a; font-size: 0.9rem; padding: 10px 0;'>
     Favorita Inventory Decision Tool &nbsp;|&nbsp; Personal Care Category — Store 44, Quito &nbsp;|&nbsp; Corporación Favorita<br>
     Powered by XGBoost &nbsp;·&nbsp; Continuous Review (s,Q) Policy with EOQ &nbsp;·&nbsp; Proof-of-concept tool
 </div>

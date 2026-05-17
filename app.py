@@ -453,20 +453,25 @@ st.markdown("""
 """, unsafe_allow_html=True)
  
 fig2, ax2 = make_plot(figsize=(12, 4))
-all_dates = [LAST_DATE] + forecast_dates
+x = np.arange(len(policies))
+width = 0.25
 colors_list = ['#2ecc71', '#f5a623', '#e74c3c']
-for (scenario, policy), color in zip(policies.items(), colors_list):
-    trajectory = project_inventory(
-        current_inventory, forecasts, policy['ROP'], policy['EOQ'], lead_time)
-    ax2.plot(all_dates, trajectory, 'o-', color=color,
-             linewidth=2.5, markersize=7, label=scenario)
-ax2.axhline(y=0, color='#e74c3c', linestyle='--', linewidth=1, alpha=0.6)
-ax2.set_xlabel('Date', color='#ffffff', fontsize=12, fontweight='bold')
-ax2.set_ylabel('Inventory Level (units)', color='#ffffff', fontsize=12, fontweight='bold')
-ax2.set_title('Projected Inventory Trajectory Under Three Scenarios',
-              color='#ffffff', fontsize=14, fontweight='bold', pad=15)
-ax2.legend(facecolor='#243555', edgecolor='#7ec8e3', labelcolor='#ffffff', fontsize=11)
-plt.xticks(rotation=45, color='#ffffff')
+
+ss_vals = [p['SS'] for p in policies.values()]
+rop_vals = [p['ROP'] for p in policies.values()]
+
+bars1 = ax2.bar(x - width, ss_vals, width, label='Safety Stock', color='#5ba8f5', alpha=0.85)
+bars2 = ax2.bar(x, rop_vals, width, label='Reorder Point', color='#f5a623', alpha=0.85)
+ax2.axhline(y=current_inventory, color='#2ecc71', linestyle='--',
+            linewidth=2, label=f'Current Inventory ({current_inventory:,})')
+
+ax2.set_xticks(x)
+ax2.set_xticklabels(list(policies.keys()), color='#ffffff', fontsize=10)
+ax2.set_ylabel('Units', color='#ffffff', fontsize=12, fontweight='bold')
+ax2.set_title('Safety Stock & Reorder Point vs Current Inventory — Three Scenarios',
+              color='#ffffff', fontsize=13, fontweight='bold', pad=15)
+ax2.legend(facecolor='#243555', edgecolor='#7ec8e3', labelcolor='#ffffff', fontsize=10)
+plt.xticks(color='#ffffff')
 plt.yticks(color='#ffffff')
 plt.tight_layout()
 st.pyplot(fig2)
